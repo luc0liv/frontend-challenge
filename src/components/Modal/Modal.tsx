@@ -8,6 +8,10 @@ import { AddTaskWrapper, addTheme } from "../Button/style";
 import { BsPlusCircleFill } from "react-icons/bs";
 import { TaskItem } from "../../types/task";
 import List from "../List/List";
+import {
+  getFromLocalStorage,
+  saveToLocalStorage,
+} from "../../helpers/localStorage";
 
 export default function Modal() {
   const [inputValues, setInputValues] = useState<InputValues>({
@@ -16,10 +20,12 @@ export default function Modal() {
   });
 
   const [taskList, setTaskList] = useState<TaskItem[]>([]);
+  const [taskListFiltered, setTaskListFiltered] = useState<TaskItem[]>([]);
   const [lastId, setLastId] = useState<number>(0);
+  const [isFiltered, setIsFiltered] = useState<boolean>(false);
 
   useEffect(() => {
-    const storedTasks = localStorage.getItem("taskList");
+    const storedTasks = getFromLocalStorage("taskList");
 
     if (storedTasks) {
       try {
@@ -44,43 +50,60 @@ export default function Modal() {
     );
   };
 
+
   const saveTask = () => {
-    const storageTaskList = localStorage.getItem("taskList");
-    const item = { id: lastId + 1, task: inputValues.task, isDone: false };
+    const storageTaskList = getFromLocalStorage("taskList");
+    if (inputValues.task === "") {
+      return;
+    }
+
+    const item = { 
+      id: lastId + 1,
+      task: inputValues.task,
+      isDone: false 
+    };
 
     if (storageTaskList) {
       const storedList = JSON.parse(storageTaskList);
       const newList = [...storedList, item];
       setTaskList(newList);
       setLastId(item.id);
-      localStorage.setItem("taskList", JSON.stringify(newList));
+      saveToLocalStorage("taskList", newList);
     } else {
       const newList = [...taskList, item];
       setTaskList(newList);
       setLastId(item.id);
-      localStorage.setItem("taskList", JSON.stringify(newList));
+      saveToLocalStorage("taskList", newList);
     }
-    setInputValues({task: ""})
+    setInputValues({ task: "" });
   };
 
   const onDelete = (index: number) => {
     const newTaskList = [...taskList];
     newTaskList.splice(index, 1);
     setTaskList(newTaskList);
-    localStorage.setItem("taskList", JSON.stringify(newTaskList));
+    saveToLocalStorage("taskList", newTaskList);
   };
 
   const setTaskStatus = (index: number) => {
     const updatedTaskList = taskList.map((task) =>
       task.id === index ? { ...task, isDone: true } : task
     );
-  
-    localStorage.setItem("taskList", JSON.stringify(updatedTaskList));
+
+    saveToLocalStorage("taskList", updatedTaskList);
     setTaskList(updatedTaskList);
   };
 
+  const filterTasksByStatus = (status: boolean) => {
+    const filteredByStatus = taskList.filter((task) => task.isDone === status);
+    setTaskListFiltered(filteredByStatus);
+    isFiltered ? setIsFiltered(false) : setIsFiltered(true);
+  }
+
   return (
     <ModalStyle>
+      <button onClick={() => filterTasksByStatus(true)}>DONE</button>
+      <button onClick={() => filterTasksByStatus(false)}>PENDING</button>
       <Input
         kind={InputTypes.SEARCH}
         value={inputValues.search}
@@ -98,7 +121,7 @@ export default function Modal() {
       </AddTaskWrapper>
 
       <List
-        tasks={taskList}
+        tasks={isFiltered ? taskListFiltered : taskList}
         onChange={handleChange}
         onDelete={(index) => onDelete(index)}
         setStatus={(index) => setTaskStatus(index)}
