@@ -2,7 +2,7 @@ import React from "react";
 import { InputProps, InputTypes } from "../../types/input";
 import { SearchIcon, SearchInput, SearchWrapper, TaskInput } from "./style";
 
-const Input: React.FC<InputProps> = ({ kind, value, onChange, isDisabled }) => {
+const Input: React.FC<InputProps> = ({ kind, value, onChange, onInputClick }) => {
   if (kind === InputTypes.TASK) {
     return (
       <TaskInput
@@ -11,7 +11,8 @@ const Input: React.FC<InputProps> = ({ kind, value, onChange, isDisabled }) => {
         value={value}
         onChange={onChange}
         name="task"
-        disabled={isDisabled}
+        disabled={false}
+        onClick={onInputClick}
       />
     );
   } else {

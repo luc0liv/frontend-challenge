@@ -9,6 +9,7 @@ export interface InputProps {
   kind: InputTypes,
   value: string,
   onChange: (e: ChangeEvent<HTMLInputElement>) => void,
+  onInputClick?: () => void,
   isDisabled?: boolean 
 }
 
