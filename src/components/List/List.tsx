@@ -6,6 +6,8 @@ import { AiFillMinusCircle } from "react-icons/ai";
 import { IoCheckmarkCircle } from "react-icons/io5";
 import Button from "../Button/Button";
 import { AddTaskWrapper, deleteTheme, saveTheme } from "../Button/style";
+import { ListContainer } from "./style";
+import { DisabledInput } from "./style";
 
 export default function List(props: {
   tasks: TaskItem[];
@@ -13,18 +15,20 @@ export default function List(props: {
   onDelete?: (index: number) => void;
   setStatus?: (index: number) => void;
 }) {
-  const [selectedTaskIndex, setSelectedTaskIndex] = useState<number | null>(null);
+  const [selectedTaskIndex, setSelectedTaskIndex] = useState<number | null>(
+    null
+  );
 
-  const onInputClick = (index: number) => { 
+  const onInputClick = (index: number) => {
     if (selectedTaskIndex === index) {
-      setSelectedTaskIndex(null); 
+      setSelectedTaskIndex(null);
     } else {
       setSelectedTaskIndex(index);
     }
   };
 
   return (
-    <section>
+    <ListContainer>
       {props.tasks.map((task, index) => (
         <AddTaskWrapper key={index}>
           {selectedTaskIndex === index ? (
@@ -35,26 +39,26 @@ export default function List(props: {
                 onChange={props.onChange}
                 onInputClick={() => onInputClick(index)}
               />
-              <Button theme={deleteTheme} onButtonClick={ () => props.onDelete?.(index) }>
+              <Button
+                theme={deleteTheme}
+                onButtonClick={() => props.onDelete?.(index)}
+              >
                 <AiFillMinusCircle size={23} />
               </Button>
-              <Button theme={saveTheme} onButtonClick={() => props.setStatus?.(task.id)}>
+              <Button
+                theme={saveTheme}
+                onButtonClick={() => props.setStatus?.(task.id)}
+              >
                 <IoCheckmarkCircle size={23} />
               </Button>
             </>
           ) : (
-            <>
-              <Input
-                kind={InputTypes.TASK}
-                value={task.task}
-                onChange={props.onChange}
-                onInputClick={() => onInputClick(index)}
-              />
-            </>
+            <DisabledInput onClick={() => onInputClick(index)}>
+              {task.task}
+            </DisabledInput>
           )}
         </AddTaskWrapper>
       ))}
-    </section>
+    </ListContainer>
   );
 }
-
