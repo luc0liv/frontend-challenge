@@ -32,6 +32,19 @@ export const addTheme = {
   radius: "0px 4px 4px 0px",
 };
 
+export const doneSelectTheme = {
+  text: "#4DA6B3",
+  border: "1px solid #4DA6B3",
+  bg: "#F7F7F8",
+  radius: "20px",
+};
+
+export const doneTheme = {
+  text: "#848484",
+  border: "1px solid #DBDBDB",
+  bg: "#FFFFFF",
+  radius: "20px",
+};
 export const AddTaskWrapper = styled.div`
   display: flex;
   justify-content: center;
