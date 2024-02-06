@@ -2,6 +2,7 @@ import React from "react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { BsPlusCircleFill } from "react-icons/bs";
 import Input from "../Input/Input";
+import DateHeader from '../DateHeader/DateHeader';
 import Button from "../Button/Button";
 import Filters from "../Filters/Filters";
 import List from "../List/List";
@@ -20,7 +21,6 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../helpers/localStorage";
-import DateHeader from '../DateHeader/DateHeader';
 
 export default function Modal() {
   const [inputValues, setInputValues] = useState<InputValues>({
