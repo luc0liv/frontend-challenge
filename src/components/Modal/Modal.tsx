@@ -20,6 +20,7 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../helpers/localStorage";
+import DateHeader from '../DateHeader/DateHeader';
 
 export default function Modal() {
   const [inputValues, setInputValues] = useState<InputValues>({
@@ -152,6 +153,7 @@ export default function Modal() {
 
   return (
     <ModalStyle>
+      <DateHeader />
       <Filters
         input={{
           value: inputValues.search,
