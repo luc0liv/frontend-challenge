@@ -1,7 +1,7 @@
 import React from "react";
 import { ButtonsContainer, FiltersContainer } from "./style";
-import Input from "../Input/Input";
-import Button from "../Button/Button";
+import Input from "../Input";
+import Button from "../Button";
 import { InputProps, InputTypes } from "../../types/input";
 import { ButtonProps } from "../../types/button";
 
