@@ -1,25 +1,25 @@
 import React from "react";
 import { ChangeEvent, useEffect, useState } from "react";
-import { ModalStyle } from "./style";
+import { BsPlusCircleFill } from "react-icons/bs";
 import Input from "../Input/Input";
-import { InputTypes, InputValues } from "../../types/input";
 import Button from "../Button/Button";
+import Filters from "../Filters/Filters";
+import List from "../List/List";
 import {
   AddTaskWrapper,
   addTheme,
   doneSelectTheme,
   doneTheme,
 } from "../Button/style";
-
-import { BsPlusCircleFill } from "react-icons/bs";
+import { Message, MessageLink, ModalStyle } from "./style";
+import { InputTypes, InputValues } from "../../types/input";
+import { ButtonProps } from "../../types/button";
 import { TaskItem } from "../../types/task";
-import List from "../List/List";
+import { EFilters } from "../../types/filters";
 import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../helpers/localStorage";
-import Filters from "../Filters/Filters";
-import { ButtonProps } from "../../types/button";
 
 export default function Modal() {
   const [inputValues, setInputValues] = useState<InputValues>({
@@ -31,7 +31,7 @@ export default function Modal() {
   const [taskListFiltered, setTaskListFiltered] = useState<TaskItem[]>([]);
   const [lastId, setLastId] = useState<number>(0);
   const [isFiltered, setIsFiltered] = useState<boolean>(false);
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState<EFilters>();
 
   useEffect(() => {
     const storedTasks = getFromLocalStorage("taskList");
@@ -78,37 +78,38 @@ export default function Modal() {
       setLastId(item.id);
       saveToLocalStorage("taskList", newList);
     } else {
-      const newList = [...taskList, item];
-      setTaskList(newList);
+      setTaskList((prevList) => [...prevList, item]);
       setLastId(item.id);
-      saveToLocalStorage("taskList", newList);
+      saveToLocalStorage("taskList", taskList);
     }
     setInputValues((prevState) => ({ ...prevState, task: "" }));
   };
 
-  const onDelete = (index: number) => {
-    const newTaskList = [...taskList];
-    newTaskList.splice(index, 1);
-    // if (isFiltered) {
-    //   const filteredList = newTaskList.filter((task) => task.isDone === true);
-    //   setTaskListFiltered(filteredList);
-    // }
-    setTaskList(newTaskList);
-    saveToLocalStorage("taskList", newTaskList);
+  const deleteTask = (index: number) => {
+    if (isFiltered) {
+      setTaskListFiltered((prevList) => prevList.filter((t) => t.id !== index));
+    }
+  
+    setTaskList((prevList) => {
+      const updatedList = prevList.filter((t) => t.id !== index);
+      saveToLocalStorage("taskList", updatedList);
+      return updatedList;
+    });
   };
 
-  const setTaskStatus = (index: number) => {
-    const updatedTaskList = taskList.map((task) =>
-      task.id === index ? { ...task, isDone: true } : task
-    );
+  const defineTaskStatus = (index: number) => {
+    if (isFiltered && filter === EFilters.DONE) {
+      setTaskListFiltered((prevList) => prevList.filter((task) => task.isDone));
+    } else if (isFiltered && filter === EFilters.PENDING) {
+      setTaskListFiltered((prevList) => prevList.filter((task) => !task.isDone));
+    }
 
-    // if (isFiltered) {
-    //   const filteredList = updatedTaskList.filter((task) => task.isDone === true);
-    //   setTaskListFiltered(filteredList);
-    // }
-
-    saveToLocalStorage("taskList", updatedTaskList);
-    setTaskList(updatedTaskList);
+    setTaskList((prevList) => {
+      const updatedList = prevList.map((task) =>
+      task.id === index ? { ...task, isDone: true } : task);
+      saveToLocalStorage("taskList", updatedList);
+      return updatedList;
+    });
   };
 
   const filterTasksByStatus = (status: boolean) => {
@@ -119,31 +120,35 @@ export default function Modal() {
     );
 
     setTaskListFiltered(filteredByStatus);
-    status ? setFilter("done") : setFilter("pending");
+    status ? setFilter(EFilters.DONE) : setFilter(EFilters.PENDING);
     isFiltered ? setIsFiltered(false) : setIsFiltered(true);
   };
 
-  const buttonsF: ButtonProps[] = [
-    {
-      theme: filter === "done" && isFiltered ? doneSelectTheme : doneTheme,
-      onButtonClick: () => filterTasksByStatus(true),
-      children: "Done",
-    },
-    {
-      theme: filter === "pending" && isFiltered ? doneSelectTheme : doneTheme,
-      onButtonClick: () => filterTasksByStatus(false),
-      children: "Pending",
-    },
-  ];
 
   const searchTask = (e: ChangeEvent<HTMLInputElement>, list: TaskItem[]) => {
     const { name, value } = e.target;
     setInputValues((prevState) => ({ ...prevState, [name]: value }));
     const searchTerm = value.toLocaleLowerCase();
-    const filtered = list.filter((t) => t.task.toLocaleLowerCase().includes(searchTerm));
+    const filtered = list.filter((t) =>
+      t.task.toLocaleLowerCase().includes(searchTerm)
+    );
     setTaskListFiltered(filtered);
+    setFilter(EFilters.SEARCH);
     value === "" ? setIsFiltered(false) : setIsFiltered(true);
-  }
+  };
+
+  const filterButtons: ButtonProps[] = [
+    {
+      theme: filter === EFilters.DONE && isFiltered ? doneSelectTheme : doneTheme,
+      onButtonClick: () => filterTasksByStatus(true),
+      children: "Done",
+    },
+    {
+      theme: filter === EFilters.PENDING && isFiltered ? doneSelectTheme : doneTheme,
+      onButtonClick: () => filterTasksByStatus(false),
+      children: "Pending",
+    },
+  ];
 
   return (
     <ModalStyle>
@@ -151,9 +156,10 @@ export default function Modal() {
         input={{
           value: inputValues.search,
           kind: InputTypes.SEARCH,
-          onChange: (e: ChangeEvent<HTMLInputElement>) => searchTask(e, isFiltered ? taskListFiltered : taskList),
+          onChange: (e: ChangeEvent<HTMLInputElement>) =>
+            searchTask(e, isFiltered ? taskListFiltered : taskList),
         }}
-        buttons={buttonsF}
+        buttons={filterButtons}
       />
       <AddTaskWrapper>
         <Input
@@ -165,12 +171,22 @@ export default function Modal() {
           <BsPlusCircleFill size={23} />
         </Button>
       </AddTaskWrapper>
-
+      {isFiltered && !taskListFiltered.length && (
+        <Message>
+          {filter === EFilters.SEARCH
+            ? "Your search found no results. "
+            : `There are no items marked as ${filter}. `}
+          <MessageLink onClick={() => setIsFiltered(false)}>
+            Clear the filter here
+          </MessageLink>{" "}
+          to see all items.
+        </Message>
+      )}
       <List
         tasks={isFiltered ? taskListFiltered : taskList}
         onChange={handleChange}
-        onDelete={(index) => onDelete(index)}
-        setStatus={(index) => setTaskStatus(index)}
+        onDelete={(index) => deleteTask(index)}
+        setStatus={(index) => defineTaskStatus(index)}
       />
     </ModalStyle>
   );

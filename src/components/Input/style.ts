@@ -7,11 +7,10 @@ export const TaskInput = styled.input`
   border-radius: 4px 0px 0px 4px;
   padding: 1rem 1.2rem;
   width: 100%;
+  font-size: 16px;
 
-  &::placeholder {
-    opacity: 50%;
-}
 `;
+
 
 export const SearchWrapper = styled.div`
   display: flex;
