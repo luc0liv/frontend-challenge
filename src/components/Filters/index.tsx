@@ -29,6 +29,8 @@ export default function Filters(props: FiltersProps) {
         kind={InputTypes.SEARCH}
         value={props.input.value}
         onChange={props.input.onChange}
+        isDisabled={props.input.isDisabled}
+        onClearClick={props.input.onClearClick}
       />
     </FiltersContainer>
   );
