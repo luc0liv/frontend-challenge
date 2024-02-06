@@ -1,5 +1,5 @@
 import React from "react";
-import { FiltersContainer } from "./style";
+import { ButtonsContainer, FiltersContainer } from "./style";
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import { InputProps, InputTypes } from "../../types/input";
@@ -13,6 +13,7 @@ interface FiltersProps {
 export default function Filters(props: FiltersProps) {
   return (
     <FiltersContainer>
+      <ButtonsContainer>
       {props.buttons.map((button, index) => (
         <Button
           key={index}
@@ -22,6 +23,7 @@ export default function Filters(props: FiltersProps) {
           {button.children}
         </Button>
       ))}
+      </ButtonsContainer>
 
       <Input
         kind={InputTypes.SEARCH}

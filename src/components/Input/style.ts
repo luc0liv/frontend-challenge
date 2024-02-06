@@ -16,7 +16,7 @@ export const SearchWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  flex: 2;
 `
 ;
 
