@@ -42,7 +42,6 @@ export function TasksProvider({ children }: TaskProps) {
   const [tasksFiltered, setTasksFiltered] = useState<TaskItem[]>([]);
   const [isFiltered, setIsFiltered] = useState<boolean>(false);
 
-
   const saveTask = (task: string) => {
     if (task === "") {
       return;
@@ -58,6 +57,9 @@ export function TasksProvider({ children }: TaskProps) {
     setTasks(newTaskList);
     setLastId(newTask.id);
     saveToLocalStorage("taskList", newTaskList);
+    if (isFiltered && filter === EFilters.PENDING) {
+      setTasksFiltered((prevList) => [...prevList, newTask]);
+    }
   };
 
   const deleteTask = (index: number) => {
@@ -101,22 +103,27 @@ export function TasksProvider({ children }: TaskProps) {
     );
 
     setFilter(isSameFilter ? EFilters.NONE : status);
-    isFiltered ? setIsFiltered(false) : setIsFiltered(true); 
+    setIsFiltered(isSameFilter ? false : true);
     setTasksFiltered(filteredByStatus);
   };
 
   const searchTask = (input: string) => {
     const searchTerm = input.toLocaleLowerCase();
-    const listToFilter = isFiltered ? tasksFiltered : tasks;
-    const filtered = listToFilter.filter((t) =>
-      t.task.toLocaleLowerCase().includes(searchTerm)
-    );
+    const filtered = tasks.filter((t) => {
+      if (filter === EFilters.DONE) {
+        return t.task.toLocaleLowerCase().includes(searchTerm) && t.isDone;
+      } else if (filter === EFilters.PENDING) {
+        return t.task.toLocaleLowerCase().includes(searchTerm) && !t.isDone;
+      } else if (filter === EFilters.NONE) {
+        return t.task.toLocaleLowerCase().includes(searchTerm);
+      }
+    });
+    setIsFiltered(true);
     setTasksFiltered(filtered);
-    setFilter(input === "" ? EFilters.NONE : EFilters.SEARCH);
+    input === "" && setFilter(filter);
   };
 
-
-  const clearFilters = () => setFilter(EFilters.NONE);
+  const clearFilters = () => setIsFiltered(false);
 
   return (
     <TasksContext.Provider
@@ -133,7 +140,7 @@ export function TasksProvider({ children }: TaskProps) {
         isFiltered,
       }}
     >
-    <ToastContainer autoClose={3000} />
+      <ToastContainer autoClose={3000} />
       {children}
     </TasksContext.Provider>
   );

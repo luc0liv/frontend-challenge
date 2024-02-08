@@ -53,9 +53,14 @@ export default function Modal() {
     clearFilters();
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onSaveTask = () => {
+    saveTask(inputValues.task);
+    setInputValues((value) => ({ ...value, task: "" }));
+  }
+
+  const saveOnKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      saveTask(inputValues.task);
+      onSaveTask()
     }
   };
 
@@ -80,23 +85,23 @@ export default function Modal() {
             kind={InputTypes.TASK}
             value={inputValues.task}
             onChange={handleChange}
-            handleKeyPress={handleKeyPress}
+            handleKeyPress={saveOnKeyPress}
           />
           <Button
             theme={addTheme}
-            onButtonClick={() => saveTask(inputValues.task)}
+            onButtonClick={() => onSaveTask()}
           >
             <BsPlusCircleFill size={23} />
           </Button>
         </AddTaskWrapper>
       )}
 
-      {filter !== EFilters.NONE && !tasksFiltered.length && (
+      {isFiltered && !tasksFiltered.length && (
         <Message filter={filter} onMessageClick={clearFilters} />
       )}
 
       <List
-        tasks={filter !== EFilters.NONE ? tasksFiltered : tasks}
+        tasks={isFiltered ? tasksFiltered : tasks}
         onChange={handleChange}
         onDelete={(index) => deleteTask(index)}
         setStatus={(index) => defineTaskStatus(index)}
