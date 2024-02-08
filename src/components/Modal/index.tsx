@@ -7,13 +7,9 @@ import Filters from "../Filters";
 import List from "../List";
 import Message from "../Message";
 import ProgressBar from "../ProgressBar";
-import {
-  AddTaskWrapper,
-  addTheme,
-} from "../Button/style";
+import { AddTaskWrapper, addTheme } from "../Button/style";
 import { ModalStyle } from "./style";
 import { InputProps, InputTypes, InputValues } from "../../types/input";
-import { EFilters } from "../../types/filters";
 import { useTasksContext } from "../../context/tasks/tasks";
 
 export default function Modal() {
@@ -31,7 +27,7 @@ export default function Modal() {
     tasksFiltered,
     clearFilters,
     searchTask,
-    isFiltered
+    isFiltered,
   } = useTasksContext();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -56,11 +52,12 @@ export default function Modal() {
   const onSaveTask = () => {
     saveTask(inputValues.task);
     setInputValues((value) => ({ ...value, task: "" }));
-  }
+  };
 
   const saveOnKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      onSaveTask()
+      onSaveTask();
+      setInputValues((value) => ({ ...value, task: "" }));
     }
   };
 
@@ -68,7 +65,7 @@ export default function Modal() {
     value: inputValues.search,
     kind: InputTypes.SEARCH,
     onChange: (e: ChangeEvent<HTMLInputElement>) => handleSearchTask(e),
-    isDisabled: filter === EFilters.SEARCH && inputValues.search !== "",
+    isDisabled: inputValues.search !== "",
     onClearClick: () => clearSearch(),
   };
 
@@ -79,7 +76,7 @@ export default function Modal() {
 
       <Filters input={filterInput} />
 
-      {filter !== EFilters.SEARCH && (
+      {inputValues.search === "" && (
         <AddTaskWrapper>
           <Input
             kind={InputTypes.TASK}
@@ -87,10 +84,7 @@ export default function Modal() {
             onChange={handleChange}
             handleKeyPress={saveOnKeyPress}
           />
-          <Button
-            theme={addTheme}
-            onButtonClick={() => onSaveTask()}
-          >
+          <Button theme={addTheme} onButtonClick={() => onSaveTask()}>
             <BsPlusCircleFill size={23} />
           </Button>
         </AddTaskWrapper>

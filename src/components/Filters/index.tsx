@@ -13,7 +13,7 @@ interface FiltersProps {
 }
 
 export default function Filters(props: FiltersProps) {
-  const { filterTasksByStatus, filter, isFiltered } =
+  const { filterTasksByStatus, filter } =
     useTasksContext();
 
   const filterButtons: ButtonProps[] = [
