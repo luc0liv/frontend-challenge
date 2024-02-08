@@ -1,8 +1,9 @@
 import React, { ReactNode, createContext, useContext, useState } from "react";
+import "react-toastify/dist/ReactToastify.css";
 import useTasks from "../../hooks/useTasks";
 import { TaskItem } from "../../types/task";
 import { saveToLocalStorage } from "../../helpers/localStorage";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { EFilters } from "../../types/filters";
 
 interface TasksContextProps {
@@ -13,6 +14,9 @@ interface TasksContextProps {
   defineTaskStatus: (index: number) => void;
   filterTasksByStatus: (status: EFilters) => void;
   filter: EFilters;
+  clearFilters: () => void;
+  searchTask: (input: string) => void;
+  isFiltered: boolean;
 }
 
 const TasksContext = createContext<TasksContextProps | null>(null);
@@ -36,6 +40,8 @@ export function TasksProvider({ children }: TaskProps) {
   const [lastId, setLastId] = useState(0);
   const [filter, setFilter] = useState(EFilters.NONE);
   const [tasksFiltered, setTasksFiltered] = useState<TaskItem[]>([]);
+  const [isFiltered, setIsFiltered] = useState<boolean>(false);
+
 
   const saveTask = (task: string) => {
     if (task === "") {
@@ -63,7 +69,7 @@ export function TasksProvider({ children }: TaskProps) {
       }
       return updatedList;
     });
-    
+
     if (filter !== EFilters.NONE) {
       setTasksFiltered((prevList) => prevList.filter((t) => t.id !== index));
     }
@@ -95,8 +101,22 @@ export function TasksProvider({ children }: TaskProps) {
     );
 
     setFilter(isSameFilter ? EFilters.NONE : status);
+    isFiltered ? setIsFiltered(false) : setIsFiltered(true); 
     setTasksFiltered(filteredByStatus);
   };
+
+  const searchTask = (input: string) => {
+    const searchTerm = input.toLocaleLowerCase();
+    const listToFilter = isFiltered ? tasksFiltered : tasks;
+    const filtered = listToFilter.filter((t) =>
+      t.task.toLocaleLowerCase().includes(searchTerm)
+    );
+    setTasksFiltered(filtered);
+    setFilter(input === "" ? EFilters.NONE : EFilters.SEARCH);
+  };
+
+
+  const clearFilters = () => setFilter(EFilters.NONE);
 
   return (
     <TasksContext.Provider
@@ -108,8 +128,12 @@ export function TasksProvider({ children }: TaskProps) {
         filterTasksByStatus,
         filter,
         tasksFiltered,
+        clearFilters,
+        searchTask,
+        isFiltered,
       }}
     >
+    <ToastContainer autoClose={3000} />
       {children}
     </TasksContext.Provider>
   );

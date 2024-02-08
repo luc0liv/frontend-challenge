@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TaskItem } from "../types/task";
 import { getFromLocalStorage } from "../helpers/localStorage";
 
 export default function useTasks() {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
+
 
   useEffect(() => {
     const storedTasks = getFromLocalStorage("taskList");

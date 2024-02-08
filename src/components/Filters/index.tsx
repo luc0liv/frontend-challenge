@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ButtonsContainer, FiltersContainer } from "./style";
 import Input from "../Input";
 import Button from "../Button";
@@ -13,9 +13,10 @@ interface FiltersProps {
 }
 
 export default function Filters(props: FiltersProps) {
-  const { filterTasksByStatus, filter } = useTasksContext();
+  const { filterTasksByStatus, filter, isFiltered } =
+    useTasksContext();
 
-    const filterButtons: ButtonProps[] = [
+  const filterButtons: ButtonProps[] = [
     {
       theme:
         filter === EFilters.DONE ? doneSelectTheme : doneTheme,
@@ -24,35 +25,36 @@ export default function Filters(props: FiltersProps) {
       icon: filter === EFilters.DONE,
     },
     {
-      theme:
-        filter === EFilters.PENDING ? doneSelectTheme : doneTheme,
+      theme: filter === EFilters.PENDING ? doneSelectTheme : doneTheme,
       onButtonClick: () => filterTasksByStatus(EFilters.PENDING),
       children: "Pending",
       icon: filter === EFilters.PENDING,
     },
   ];
   return (
-    <FiltersContainer>
-      <ButtonsContainer>
-      {filterButtons.map((button, index) => (
-        <Button
-          key={index}
-          theme={button.theme}
-          onButtonClick={button.onButtonClick}
-          icon={button.icon}
-        >
-          {button.children}
-        </Button>
-      ))}
-      </ButtonsContainer>
+    <>
+      <FiltersContainer>
+        <ButtonsContainer>
+          {filterButtons.map((button, index) => (
+            <Button
+              key={index}
+              theme={button.theme}
+              onButtonClick={button.onButtonClick}
+              icon={button.icon}
+            >
+              {button.children}
+            </Button>
+          ))}
+        </ButtonsContainer>
 
-      <Input
-        kind={InputTypes.SEARCH}
-        value={props.input.value}
-        onChange={props.input.onChange}
-        isDisabled={props.input.isDisabled}
-        onClearClick={props.input.onClearClick}
-      />
-    </FiltersContainer>
+        <Input
+          kind={InputTypes.SEARCH}
+          value={props.input.value}
+          onChange={props.input.onChange}
+          isDisabled={props.input.isDisabled}
+          onClearClick={props.input.onClearClick}
+        />
+      </FiltersContainer>
+    </>
   );
 }
