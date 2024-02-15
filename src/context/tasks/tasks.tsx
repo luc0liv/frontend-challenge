@@ -1,4 +1,10 @@
-import React, { ReactNode, createContext, useContext, useState } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import "react-toastify/dist/ReactToastify.css";
 import useTasks from "../../hooks/useTasks";
 import { TaskItem } from "../../types/task";
@@ -37,7 +43,6 @@ type TaskProps = {
 
 export function TasksProvider({ children }: TaskProps) {
   const { tasks, setTasks } = useTasks();
-  const [lastId, setLastId] = useState(0);
   const [filter, setFilter] = useState(EFilters.NONE);
   const [tasksFiltered, setTasksFiltered] = useState<TaskItem[]>([]);
   const [isFiltered, setIsFiltered] = useState<boolean>(false);
@@ -48,14 +53,13 @@ export function TasksProvider({ children }: TaskProps) {
     }
 
     const newTask: TaskItem = {
-      id: lastId + 1,
+      id: new Date().getTime(),
       task: task,
       isDone: false,
     };
 
     const newTaskList = [...tasks, newTask];
     setTasks(newTaskList);
-    setLastId(newTask.id);
     saveToLocalStorage("taskList", newTaskList);
     if (isFiltered && filter === EFilters.PENDING) {
       setTasksFiltered((prevList) => [...prevList, newTask]);
@@ -80,9 +84,10 @@ export function TasksProvider({ children }: TaskProps) {
   const defineTaskStatus = (index: number) => {
     setTasks((prevList) => {
       const updatedList = prevList.map((task) =>
-        task.id === index ? { ...task, isDone: true } : task
+        task.id === index ? { ...task, isDone: !task.isDone } : task
       );
-      const allIsDone = updatedList.every((t) => t.isDone === true);
+
+      const allIsDone = tasks.every((t) => t.isDone === true);
       if (allIsDone) {
         toast("All done!");
       }
@@ -123,7 +128,10 @@ export function TasksProvider({ children }: TaskProps) {
     input === "" && setFilter(filter);
   };
 
-  const clearFilters = () => setIsFiltered(false);
+  const clearFilters = () => {
+    setIsFiltered(false);
+    setFilter(EFilters.NONE);
+  };
 
   return (
     <TasksContext.Provider
