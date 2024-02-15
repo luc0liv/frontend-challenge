@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { device } from "../../styles";
 
 export const ListContainer = styled.section`
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 50%;
   margin-top: 1rem;
   display: flex;
@@ -36,7 +36,11 @@ export const DisabledInput = styled.p`
   background-color: #f7f7f8;
   border: 1px solid #dbdbdb;
   border-radius: 4px;
+  font-size: 16px;
   padding: 1rem 1.2rem;
+  height: 48px;
   width: 100%;
   margin: 0;
+  box-sizing: border-box;
+  cursor: pointer;
 `;

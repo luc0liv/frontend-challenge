@@ -10,6 +10,9 @@ export const TaskInput = styled.input`
   padding: 1rem 1.2rem;
   width: 100%;
   font-size: 16px;
+  height: 48px;
+  margin: 0;
+  box-sizing: border-box;
 `;
 
 export const SearchWrapper = styled.div`
