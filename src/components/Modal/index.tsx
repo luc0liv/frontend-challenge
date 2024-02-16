@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import { BsPlusCircleFill } from "react-icons/bs";
 import Input from "../Input";
 import DateHeader from "../DateHeader";
@@ -12,6 +12,7 @@ import { ModalStyle } from "./style";
 import { InputProps, InputTypes, InputValues } from "../../types/input";
 import { useTasksContext } from "../../context/tasks/tasks";
 
+
 export default function Modal() {
   const [inputValues, setInputValues] = useState<InputValues>({
     task: "",
@@ -24,10 +25,9 @@ export default function Modal() {
     deleteTask,
     defineTaskStatus,
     filter,
-    tasksFiltered,
+    setFilter,
     clearFilters,
     searchTask,
-    isFiltered,
   } = useTasksContext();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +41,8 @@ export default function Modal() {
   const handleSearchTask = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setInputValues((prevState) => ({ ...prevState, search: value }));
-    searchTask(value);
+    setFilter(filter);
+
   };
 
   const clearSearch = () => {
@@ -69,6 +70,8 @@ export default function Modal() {
     onClearClick: () => clearSearch(),
   };
 
+  const taskList = searchTask(inputValues.search);
+
   return (
     <ModalStyle>
       <DateHeader />
@@ -90,12 +93,12 @@ export default function Modal() {
         </AddTaskWrapper>
       )}
 
-      {isFiltered && !tasksFiltered.length && (
-        <Message filter={filter} onMessageClick={clearFilters} />
+      {!taskList.length && (
+        <Message filter={filter} onMessageClick={clearSearch} />
       )}
 
       <List
-        tasks={isFiltered ? tasksFiltered : tasks}
+        tasks={taskList}
         onChange={handleChange}
         onDelete={(index) => deleteTask(index)}
         setStatus={(index) => defineTaskStatus(index)}
