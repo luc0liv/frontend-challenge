@@ -4,4 +4,5 @@ export interface ButtonProps {
   children?: any;
   icon?: boolean;
   onButtonClick?: () => void;
+  onHover?: () => void;
 }

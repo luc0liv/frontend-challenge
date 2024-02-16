@@ -30,11 +30,31 @@ export const deleteTheme = {
   height: "48px",
 };
 
+export const editTheme = {
+  text: "#FFFFFF",
+  bg: "#f7e732",
+  height: "48px",
+};
+
 export const saveTheme = {
   text: "#FFFFFF",
   bg: "#5DE290",
   radius: "0px 4px 4px 0px",
   height: "48px",
+};
+
+export const undoTheme = {
+  text: "#FFFFFF",
+  bg: "#848484",
+  radius: "0px 4px 4px 0px",
+  height: "48px",
+};
+
+export const cancelTheme = {
+  text: "#FFFFFF",
+  bg: "#848484",
+  radius: "4px",
+  height: "20px",
 };
 
 export const addTheme = {

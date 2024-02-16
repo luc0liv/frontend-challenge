@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { BsPlusCircleFill } from "react-icons/bs";
 import Input from "../Input";
 import DateHeader from "../DateHeader";
@@ -42,7 +42,6 @@ export default function Modal() {
     const { value } = e.target;
     setInputValues((prevState) => ({ ...prevState, search: value }));
     setFilter(filter);
-
   };
 
   const clearSearch = () => {
@@ -69,6 +68,7 @@ export default function Modal() {
     isDisabled: inputValues.search !== "",
     onClearClick: () => clearSearch(),
   };
+
 
   const taskList = searchTask(inputValues.search);
 
@@ -99,7 +99,7 @@ export default function Modal() {
 
       <List
         tasks={taskList}
-        onChange={handleChange}
+        onChange={(e) => handleChange(e)}
         onDelete={(index) => deleteTask(index)}
         setStatus={(index) => defineTaskStatus(index)}
       />

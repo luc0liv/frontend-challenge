@@ -1,10 +1,21 @@
 import { GrSearch } from "react-icons/gr";
 import { CgClose } from "react-icons/cg";
 import styled from "styled-components";
-import { device } from "../../styles";
 
 export const TaskInput = styled.input`
-  background-color: #f7f7f8;
+  background-color: #FFFFFF;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px 0px 0px 4px;
+  padding: 1rem 1.2rem;
+  width: 100%;
+  font-size: 16px;
+  height: 48px;
+  margin: 0;
+  box-sizing: border-box;
+`;
+
+export const TaskInputItem = styled.input`
+  background-color: #FFFFFF;
   border: 1px solid #dbdbdb;
   border-radius: 4px 0px 0px 4px;
   padding: 1rem 1.2rem;

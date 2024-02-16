@@ -16,6 +16,7 @@ interface TasksContextProps {
   tasks: TaskItem[];
   saveTask: (task: string) => void;
   deleteTask: (index: number) => void;
+  editTask: (task: TaskItem, newValue: string) => void;
   defineTaskStatus: (index: number) => void;
   filterTasksByStatus: (status: EFilters) => void;
   filter: EFilters;
@@ -70,6 +71,15 @@ export function TasksProvider({ children }: TaskProps) {
     setTasks(newTaskList);
   };
 
+  const editTask = (task: TaskItem, newValue: string) => {
+    setTasks((prevTasks) => {
+      const updatedList = prevTasks.map((t) =>
+      t.id === task.id ? {...task, task: newValue} : t
+    );
+    return updatedList;
+    });
+  }
+
   const deleteTask = (index: number) => {
     setTasks((prevList) => {
       const updatedList = prevList.filter((t) => t.id !== index);
@@ -82,7 +92,6 @@ export function TasksProvider({ children }: TaskProps) {
       const updatedList = prevList.map((task) =>
         task.id === index ? { ...task, isDone: !task.isDone } : task
       );
-
       return updatedList;
     });
   };
@@ -117,6 +126,7 @@ export function TasksProvider({ children }: TaskProps) {
         tasks,
         saveTask,
         deleteTask,
+        editTask,
         defineTaskStatus,
         filterTasksByStatus,
         filter,

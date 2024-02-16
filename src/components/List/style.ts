@@ -1,5 +1,9 @@
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { device, size } from "../../styles";
+
+interface DisableCustomProps {
+  isDone: boolean;
+}
 
 export const ListContainer = styled.section`
   overflow-y: auto;
@@ -33,10 +37,21 @@ export const ListContainer = styled.section`
   ::-webkit-scrollbar-thumb {
   background-color: #848484;
   border-radius: 9px;
-`
-;
+`;
 
-export const DisabledInput = styled.p`
+const doneAnimation = keyframes`
+  0% {
+    background-color: #F7F7F8;
+  }
+  50% {
+    background-color: #5DE290;
+  }
+  100% {
+    background-color: #F7F7F8;
+  }
+`;
+
+export const DisabledInput = styled.p<DisableCustomProps>`
   background-color: #f7f7f8;
   border: 1px solid #dbdbdb;
   border-radius: 4px;
@@ -47,4 +62,14 @@ export const DisabledInput = styled.p`
   margin: 0;
   box-sizing: border-box;
   cursor: pointer;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  ${({ isDone }) =>
+  isDone &&
+  css`
+    animation: ${doneAnimation} 3s ease-in-out;
+  `}
 `;
