@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { device } from "../../styles";
+import { device, size } from "../../styles";
 
 export const ListContainer = styled.section`
   overflow-y: auto;
@@ -10,12 +10,16 @@ export const ListContainer = styled.section`
   gap: 6px;
   padding-right: 6px;
 
-  @media (max-width: 1650px) {
+  @media ${device.mobileL} {
+    max-height: 60%;
+  }
+
+  @media (min-width: ${size.tablet}) and (max-width: 1023px) {
     max-height: 40%;
   }
 
-  @media ${device.mobileL} {
-    max-height: 60%;
+  @media ${device.desktopL} {
+    max-height: 70%;
   }
 
   ::-webkit-scrollbar {

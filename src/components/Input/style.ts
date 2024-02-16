@@ -22,7 +22,7 @@ export const SearchWrapper = styled.div`
   flex: 2;
   position: relative;
 
-  @media ${device.mobileL} {
+  @media (min-width: 320px) and (max-width: 1024px) {
     flex: auto;
   }
 `;

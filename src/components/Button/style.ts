@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+
 export const ButtonThemed = styled.button`
   color: ${(props) => props.theme.text};
   border: ${(props) => props.theme.border || "none"};
@@ -49,8 +50,8 @@ export const doneSelectTheme = {
   border: "1px solid #4DA6B3",
   bg: "#F7F7F8",
   radius: "20px",
-  padding: "0.5em 1.2em",
-  width: "40%",
+  padding: "0.5em 1.5em",
+  width: "110px",
 };
 
 export const doneTheme = {
@@ -58,8 +59,8 @@ export const doneTheme = {
   border: "1px solid #DBDBDB",
   bg: "#FFFFFF",
   radius: "20px",
-  padding: "0.5em 1.2em",
-  width: "40%",
+  padding: "0.5em 1.5em",
+  width: "110px",
 };
 
 export const AddTaskWrapper = styled.div`
