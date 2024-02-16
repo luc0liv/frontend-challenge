@@ -47,6 +47,17 @@ export function TasksProvider({ children }: TaskProps) {
   const [tasksFiltered, setTasksFiltered] = useState<TaskItem[]>([]);
   const [isFiltered, setIsFiltered] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (tasks.length > 0) {
+      const allIsDone = tasks.every((t) => t.isDone === true);
+      if (allIsDone) {
+        toast("All done!");
+      }
+    }
+
+    saveToLocalStorage("taskList", tasks);
+  }, [tasks]);
+
   const saveTask = (task: string) => {
     if (task === "") {
       return;
@@ -60,7 +71,6 @@ export function TasksProvider({ children }: TaskProps) {
 
     const newTaskList = [...tasks, newTask];
     setTasks(newTaskList);
-    saveToLocalStorage("taskList", newTaskList);
     if (isFiltered && filter === EFilters.PENDING) {
       setTasksFiltered((prevList) => [...prevList, newTask]);
     }
@@ -69,10 +79,6 @@ export function TasksProvider({ children }: TaskProps) {
   const deleteTask = (index: number) => {
     setTasks((prevList) => {
       const updatedList = prevList.filter((t) => t.id !== index);
-      saveToLocalStorage("taskList", updatedList);
-      if (!updatedList.length) {
-        localStorage.clear();
-      }
       return updatedList;
     });
 
@@ -87,11 +93,6 @@ export function TasksProvider({ children }: TaskProps) {
         task.id === index ? { ...task, isDone: !task.isDone } : task
       );
 
-      const allIsDone = tasks.every((t) => t.isDone === true);
-      if (allIsDone) {
-        toast("All done!");
-      }
-      saveToLocalStorage("taskList", updatedList);
       return updatedList;
     });
 
